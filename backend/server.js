@@ -29,18 +29,15 @@ app.use("/api/coupons", couponRoutes);
 app.use("/api/payments", paymentRoutes);
 app.use("/api/analytics", analyticsRoutes);
 
-if (process.env.NODE_ENV === "production") {
-	app.use(express.static(path.join(__dirname, "/frontend/dist")));
+// API status route
+app.get("/", (req, res) => {
+	res.json({ message: "API is running!", status: "success" });
+});
 
-	app.get("*", (req, res) => {
-		res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
-	});
-} else {
-	// Development route
-	app.get("/", (req, res) => {
-		res.json({ message: "API is running! Frontend should run on http://localhost:5173" });
-	});
-}
+// Handle 404 for non-API routes
+app.get("*", (req, res) => {
+	res.status(404).json({ message: "Route not found" });
+});
 
 app.listen(PORT, () => {
 	console.log("Server is running on http://localhost:" + PORT);
